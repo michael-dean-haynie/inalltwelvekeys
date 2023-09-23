@@ -1,5 +1,20 @@
 # inalltwelvekeys
 
+## Steps to set up localhost certificate for local development with https
+* create a new directory `~/certs/`
+* `npm install -g mkcert`
+* `mkcert create-ca`
+```shell
+mkdir ~/certs/
+cd ~/certs
+
+npm install -g mkcert
+mkcert create-ca
+mkcert create-cert
+```
+* add the ca.crt and the cert.crt to keychain
+* double-click the ca.cert and trust it always
+
 ## Steps to configure linode server from scratch
 * Go to linode.com and create a new linode
   * Shared CPU - Nanode 1 GB
