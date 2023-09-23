@@ -45,4 +45,7 @@ sudo git clone https://github.com/michael-dean-haynie/inalltwelvekeys.git
 cd inalltwelvekeys
 sudo npm install
 
+# configure .env file
+cp .env.example .env
+# vim into it and update values
 ```
