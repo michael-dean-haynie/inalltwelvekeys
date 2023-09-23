@@ -20,6 +20,9 @@ const serverOptions = {
     cert: readFileSync(process.env.TLS_CERT),
     key: readFileSync(process.env.TLS_CERT_KEY)
 }
+if (process.env.TLS_CA_BUNDLE !== undefined) {
+    serverOptions.ca = readFileSync(process.env.TLS_CA_BUNDLE)
+}
 const server = createServer(serverOptions, (req, res) => {
     res.writeHead(200);
     res.end('hello world\n');
