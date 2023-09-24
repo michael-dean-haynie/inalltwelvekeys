@@ -7,7 +7,7 @@ const socket = new WebSocket(serverUrl);
 // Function to handle incoming messages
 socket.onmessage = function(event) {
     const output = document.getElementById('output');
-    output.innerHTML += `<p>Received: ${event.data}</p>`;
+    output.innerHTML = `<p>Received: ${event.data}</p>` + output.innerHTML;
 };
 
 // Function to handle WebSocket connection opened
