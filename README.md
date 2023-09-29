@@ -1,19 +1,56 @@
 # inalltwelvekeys
 
-## Steps to set up localhost certificate for local development with https
-* create a new directory `~/certs/`
-* `npm install -g mkcert`
-* `mkcert create-ca`
+## Setup certificates for local network development with https
+* make sure the two following lines are in /etc/hosts (on my machine with the webserver)
+* also make sure they are in the raspberry pi /etc/hosts (included in the pianopi readme)
+* ips may change, make sure they are accurate
+```text
+192.168.0.3 mbp.local
+192.168.0.11 pianopi.local
+```
+Then create certificate authority and certificate
 ```shell
 mkdir ~/certs/
 cd ~/certs
 
-npm install -g mkcert
-mkcert create-ca
-mkcert create-cert
+# create self-signed CA (certificate authority)
+rm ca.*
+openssl genpkey -algorithm RSA -out ca.key
+openssl req -x509 -new -key ca.key -out ca.crt # Follow the prompts to provide information for the CA certificate
+
+# create certificate signing request for the local network hostname
+cd ~/certs
+rm cert.*
+cat > cert.cnf <<EOF
+[req]
+distinguished_name = req_distinguished_name
+req_extensions = v3_req
+prompt = no
+
+
+[req_distinguished_name]
+CN = mbp.local
+
+[v3_req]
+subjectAltName = @alt_names
+
+[alt_names]
+DNS.1 = mbp.local
+EOF
+
+openssl req -new -nodes -out cert.csr -keyout cert.key -config cert.cnf
+
+# sign the CSR with the CA certificate
+openssl x509 -req -in cert.csr -out cert.crt -CA ca.crt -CAkey ca.key -CAcreateserial -days 365
+
+# (optionally) verify the certificate
+openssl x509 -in cert.crt -text -noout
+
 ```
 * add the ca.crt and the cert.crt to keychain
 * double-click the ca.cert and trust it always
+* make ca.cert trusted on both mbp machine and pianopi raspberrypi
+* chrome does not seem to want to cooperate, so just confirm and go into dangerous webpage
 
 ## Steps to configure linode server from scratch
 * Go to linode.com and create a new linode

@@ -30,7 +30,7 @@ const server = createServer(serverOptions, (req, res) => {
     if (req.url === '/browser-config.js') {
         res.writeHead(200, { 'Content-Type': 'text/javascript' });
         res.end(`window.config = {
-            hostname: '${process.env.HOSTNAME}:${process.env.HTTPS_PORT}'
+            hostname: '${process.env.CLIENT_HOSTNAME}:${process.env.HTTPS_PORT}'
         }`);
     }
 
