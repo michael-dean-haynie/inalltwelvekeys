@@ -50,8 +50,11 @@ const wss = new WebSocketServer({ server });
 wss.on('listening', () => {
     console.log(`wss server listening on port ${process.env.HTTPS_PORT} ...`)
 })
-wss.on('connection', function connection(ws) {
+wss.on('connection', function connection(ws, request) {
     connections.push(ws)
+    console.log(`new connection!`)
+    console.log('ip:', request.socket.remoteAddress)
+    console.log('userAgent', request.headers['user-agent'])
     ws.on('error', console.error)
 
     ws.on('message', function message(data) {
