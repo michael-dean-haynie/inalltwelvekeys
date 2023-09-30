@@ -26,45 +26,21 @@ if (process.env.TLS_CA_BUNDLE !== undefined) {
     serverOptions.ca = fs.readFileSync(process.env.TLS_CA_BUNDLE)
 }
 const server = createServer(serverOptions, (req, res) => {
-    // Handle browser-config.js
-    if (req.url === '/browser-config.js') {
-        res.writeHead(200, { 'Content-Type': 'text/javascript' });
-        res.end(`window.config = {
-            hostname: '${process.env.CLIENT_HOSTNAME}:${process.env.HTTPS_PORT}'
-        }`);
+    const angularIndex = path.join(__dirname, 'inalltwelvekeys-ui', 'index.html')
+    let angularExists = false
+    try {
+        fs.accessSync(angularIndex, fs.constants.F_OK | fs.constants.R_OK);
+        angularExists = true;
+    } catch (err) {
+        angularExists = false;
     }
 
-    // Get the requested file path
-    if (req.url === '/') {
-        req.url = '/index.html'
+    if (angularExists) {
+        serveAngular(req, res)
+    } else {
+       serveDefault(req, res)
     }
-    const filePath = path.join(__dirname, req.url);
 
-    // Check if the file exists
-    fs.access(filePath, fs.constants.F_OK, (err) => {
-        if (err) {
-            // File does not exist, return a 404 response
-            res.writeHead(404, { 'Content-Type': 'text/plain' });
-            res.end('Not Found');
-            return;
-        }
-
-        // Read and serve the file
-        fs.readFile(filePath, (err, data) => {
-            if (err) {
-                res.writeHead(500, { 'Content-Type': 'text/plain' });
-                res.end('Internal Server Error');
-                return;
-            }
-
-            // Determine the content type based on the file extension
-            const extname = path.extname(filePath);
-            const contentType = getContentType(extname);
-
-            res.writeHead(200, { 'Content-Type': contentType });
-            res.end(data);
-        });
-    });
 });
 
 // create web socket server (on top of https server)
@@ -115,6 +91,86 @@ http.createServer((req, res) => {
     console.log(`http server listening on port ${process.env.HTTP_PORT} ...`)
 })
 
+function serveDefault(req, res) {
+    // Handle browser-config.js
+    if (req.url === '/browser-config.js') {
+        res.writeHead(200, { 'Content-Type': 'text/javascript' });
+        res.end(`window.config = {
+            hostname: '${process.env.CLIENT_HOSTNAME}:${process.env.HTTPS_PORT}'
+        }`);
+    }
+
+    // Get the requested file path
+    if (req.url === '/') {
+        req.url = '/index.html'
+    }
+    const filePath = path.join(__dirname, req.url);
+
+    // Check if the file exists
+    fs.access(filePath, fs.constants.F_OK, (err) => {
+        if (err) {
+            // File does not exist, return a 404 response
+            res.writeHead(404, { 'Content-Type': 'text/plain' });
+            res.end('Not Found');
+            return;
+        }
+
+        // Read and serve the file
+        fs.readFile(filePath, (err, data) => {
+            if (err) {
+                res.writeHead(500, { 'Content-Type': 'text/plain' });
+                res.end('Internal Server Error');
+                return;
+            }
+
+            // Determine the content type based on the file extension
+            const extname = path.extname(filePath);
+            const contentType = getContentType(extname);
+
+            res.writeHead(200, { 'Content-Type': contentType });
+            res.end(data);
+        });
+    });
+}
+
+function serveAngular(req, res) {
+    const reqIsPathOnly = !req.url.includes('.')
+    if (reqIsPathOnly) {
+        req.url = '/index.html'
+    }
+
+    // Get the requested file path
+    if (req.url === '/') {
+        req.url = '/index.html'
+    }
+    const filePath = path.join(__dirname, 'inalltwelvekeys-ui',  req.url);
+
+    // Check if the file exists
+    fs.access(filePath, fs.constants.F_OK, (err) => {
+        if (err) {
+            // File does not exist, return a 404 response
+            res.writeHead(404, { 'Content-Type': 'text/plain' });
+            res.end('Not Found');
+            return;
+        }
+
+        // Read and serve the file
+        fs.readFile(filePath, (err, data) => {
+            if (err) {
+                res.writeHead(500, { 'Content-Type': 'text/plain' });
+                res.end('Internal Server Error');
+                return;
+            }
+
+            // Determine the content type based on the file extension
+            const extname = path.extname(filePath);
+            const contentType = getContentType(extname);
+
+            res.writeHead(200, { 'Content-Type': contentType });
+            res.end(data);
+        });
+    });
+}
 // Function to determine content type based on file extension
 function getContentType(extname) {
     switch (extname) {

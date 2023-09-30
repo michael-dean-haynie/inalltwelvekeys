@@ -98,6 +98,6 @@ cd inalltwelvekeys
 sudo npm install
 
 # configure .env file
-cp .env.example .env
+cp .env.example.prod .env
 # vim into it and update values
 ```
