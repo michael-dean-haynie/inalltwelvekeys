@@ -1,0 +1,13 @@
+[Unit]
+Description=inalltwelvekeys Node.js App
+After=network.target
+
+[Service]
+ExecStart=/usr/bin/node /root/inalltwelvekeys/index.js
+StandardOutput=journal
+StandardError=journal
+WorkingDirectory=/root/inalltwelvekeys
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target

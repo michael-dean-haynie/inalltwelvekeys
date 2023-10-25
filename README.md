@@ -76,7 +76,7 @@ cat inalltwelvekeys.com.csr
   * once active, the SSL cert can be obtained from namecheap
   * upload inalltwelvekeys_com.crt and inalltwelvekeys_com.ca-bundle to linode
     * (example: `scp /Users/michael/Downloads/inalltwelvekeys_com/inalltwelvekeys_com.crt root@<ip>:/root/certs/`)
-* 
+* Configure Server
 ```shell
 ssh root@<ipv4 address>
 
@@ -110,6 +110,12 @@ sudo npm install
 # configure .env file
 cp .env.example.prod .env
 # vim into it and update values
+
+# set up system.d
+sudo cp inalltwelvekeys.service /etc/systemd/system/inalltwelvekeys.service
+sudo systemctl daemon-reload
+sudo systemctl enable inalltwelvekeys.service
+sudo systemctl start inalltwelvekeys.service
 ```
 
 ## Side Load the UI
