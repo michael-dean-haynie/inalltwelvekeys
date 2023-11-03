@@ -126,3 +126,8 @@ cd inalltwelvekeys-ui || exit
 sudo npm install
 sudo npm run deploy
 ```
+
+## Monitor logs
+```shell
+sudo journalctl -f -n 100 -u inalltwelvekeys
+```
