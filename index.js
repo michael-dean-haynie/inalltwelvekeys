@@ -55,7 +55,12 @@ wss.on('connection', function connection(ws, request) {
     console.log(`new connection!`)
     console.log('ip:', request.socket.remoteAddress)
     console.log('userAgent', request.headers['user-agent'])
+
     ws.on('error', console.error)
+
+    ws.on('close', function close() {
+        console.log('disconnected');
+    })
 
     ws.on('message', function message(data) {
         let dataAsString
