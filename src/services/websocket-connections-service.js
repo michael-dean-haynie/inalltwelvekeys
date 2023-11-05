@@ -8,6 +8,7 @@ module.exports = class WebsocketConnectionsService {
     registerConnection({ websocket }) {
         if (!websocket) {
             console.error('parameter "websocket" is required')
+            return
         }
 
         const connection = {
