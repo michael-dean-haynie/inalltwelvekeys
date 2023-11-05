@@ -6,6 +6,10 @@ module.exports = class WebsocketConnectionsService {
     constructor() {}
 
     registerConnection({ websocket }) {
+        if (!websocket) {
+            console.error('parameter "websocket" is required')
+        }
+
         const connection = {
             id: uuidv4(),
             websocket

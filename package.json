@@ -5,6 +5,8 @@
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
+    "redeploy": "sudo systemctl stop inalltwelvekeys.service && sudo git pull && sudo npm install && sudo systemctl start inalltwelvekeys.service && sudo journalctl -f -n 100 -u inalltwelvekeys",
+    "journal": "sudo journalctl -f -n 100 -u inalltwelvekeys",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
