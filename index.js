@@ -4,7 +4,7 @@ const fs  = require('fs')
 const { WebSocketServer } = require('ws')
 const dotenv = require('dotenv')
 const path = require('path')
-const WebsocketConnectionsService = require('./services/websocket-connections-service')
+const WebsocketConnectionsService = require('./src/services/websocket-connections-service')
 
 // configure / validate environment variables
 dotenv.config()
@@ -55,35 +55,45 @@ wss.on('listening', () => {
     console.log(`wss server listening on port ${process.env.HTTPS_PORT} ...`)
 })
 wss.on('connection', function connection(ws, request) {
-    connections.push(ws)
-    console.log(`new connection!`)
-    console.log('ip:', request.socket.remoteAddress)
-    console.log('userAgent', request.headers['user-agent'])
+    // console.log('ip:', request.socket.remoteAddress)
+    // console.log('userAgent', request.headers['user-agent'])
 
-    ws.on('error', console.error)
-
-    ws.on('close', function close() {
-        console.log('disconnected');
-    })
+    // register connection
+    const connection = websocketConnectionsService.registerConnection(ws)
+    console.log(`Connection opened (${connection.id})`)
 
     ws.on('message', function message(data) {
         let dataAsString
         if (typeof data === 'string') {
             // Data is already a string, no need to convert
-            console.log('Received message as string:', data);
+            // console.log('Received message as string:', data);
             dataAsString = data
         } else if (data instanceof Buffer) {
             // Convert the binary data to a string using UTF-8 encoding
             const messageString = data.toString('utf8');
-            console.log('Received message as binary:', messageString);
+            // console.log('Received message as binary:', messageString);
             dataAsString = messageString
         } else {
             // Handle other data types if necessary
-            console.error('Received unsupported data type:', typeof data);
+            console.error('Received unsupported data type:', typeof data)
         }
-        console.log(`received: ${dataAsString}`)
-        connections.forEach(connection => connection.send(dataAsString))
-    });
+        console.log(`Connection received message (${connection.id}): ${dataAsString}`)
+
+        // broadcast to all other connections
+        const otherConnections = websocketConnectionsService.connections.filter(conn => conn.id !== connection.id)
+        for (let otherConnection of otherConnections) {
+            otherConnection.websocket.send(dataAsString)
+        }
+    })
+
+    ws.on('error', (error) => {
+        console.error(`Error with connection (${connection.id}): `, error)
+    })
+
+    ws.on('close', function close() {
+        console.log(`Connection closed (${connection.id})`)
+    })
+
 });
 
 // start https server
