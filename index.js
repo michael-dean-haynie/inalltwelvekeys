@@ -59,7 +59,7 @@ wss.on('connection', function connection(ws, request) {
     // console.log('userAgent', request.headers['user-agent'])
 
     // register connection
-    const connection = websocketConnectionsService.registerConnection(ws)
+    const connection = websocketConnectionsService.registerConnection({ws})
     console.log(`Connection opened (${connection.id})`)
 
     ws.on('message', function message(data) {
