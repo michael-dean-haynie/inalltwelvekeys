@@ -4,6 +4,7 @@ const fs  = require('fs')
 const { WebSocketServer } = require('ws')
 const dotenv = require('dotenv')
 const path = require('path')
+const WebsocketConnectionsService = require('./services/websocket-connections-service')
 
 // configure / validate environment variables
 dotenv.config()
@@ -16,6 +17,9 @@ if (process.env.TLS_CERT_KEY === undefined) {
 if (process.env.HTTPS_PORT === undefined) {
     throw new Error("Missing PORT environment variable.")
 }
+
+// Initialize Services
+const websocketConnectionsService = new WebsocketConnectionsService()
 
 // create https server
 const serverOptions = {
