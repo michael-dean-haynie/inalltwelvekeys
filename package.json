@@ -21,9 +21,11 @@
   "homepage": "https://github.com/michael-dean-haynie/inalltwelvekeys#readme",
   "dependencies": {
     "dotenv": "^16.3.1",
+    "finalhandler": "^1.2.0",
     "fs": "^0.0.1-security",
     "http": "^0.0.1-security",
     "https": "^1.0.0",
+    "router": "^1.3.8",
     "uuid": "^9.0.1",
     "ws": "^8.14.2"
   }
