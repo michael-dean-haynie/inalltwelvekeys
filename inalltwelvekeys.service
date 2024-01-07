@@ -3,7 +3,7 @@ Description=inalltwelvekeys Node.js App
 After=network.target
 
 [Service]
-ExecStart=/usr/bin/node /root/inalltwelvekeys/index.js
+ExecStart=/usr/bin/npm --prefix /root/inalltwelvekeys start
 StandardOutput=journal
 StandardError=journal
 WorkingDirectory=/root/inalltwelvekeys
