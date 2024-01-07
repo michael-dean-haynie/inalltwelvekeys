@@ -14,6 +14,15 @@ class MessageRepository {
             timestamp
         })
     }
+
+    static async readPaginated(page, pageSize) {
+        const result = await Message.query()
+            .page(page, pageSize)
+
+        // console.log(result.results.length); // --> 100
+        // console.log(result.total); // --> 3341
+        return result;
+    }
 }
 
 module.exports = MessageRepository
