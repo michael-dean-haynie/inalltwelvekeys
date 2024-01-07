@@ -6,9 +6,11 @@ const apiRouter = require('./api-router.js')
 
 const router = Router()
 
-router.route('/').all(uiHandler)
-
 router.use('/api/', apiRouter)
+
+// this wild card seems to catch things that don't match the routes above
+// this works nicely for matching .js, .css, .html ...etc from the angular ui
+router.route('/*').all(uiHandler)
 
 
 /**
