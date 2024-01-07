@@ -19,6 +19,31 @@ async function get(req, res) {
 }
 
 /**
+ * Handler responsible for processing GET requests for a list of message segments within a time window
+ */
+async function getSegments(req, res) {
+    const queryData = url.parse(req.url, true).query;
+
+    if (
+        !validator.isISO8601(queryData.start || '') ||
+        !validator.isISO8601(queryData.end || '')
+    ) {
+        res.statusCode = 400
+        res.setHeader('Content-Type', 'text/plain')
+        res.end(`query params 'start' and 'end' must both be ISO8601 dates`)
+    }
+
+    const startMs = new Date(queryData.start).getTime()
+    const endMs = new Date(queryData.end).getTime()
+    const gapSizeMs = 10000 // gap size set to 10000 ms (10 seconds)
+    const result = await MessageRepository.readSegments(startMs, endMs, gapSizeMs)
+
+    res.statusCode = 200
+    res.setHeader('Content-Type', 'application/json')
+    res.end(JSON.stringify(result))
+}
+
+/**
  * Handler responsible for processing DELETE requests
  */
 async function del(req, res, next) {
@@ -42,5 +67,6 @@ async function del(req, res, next) {
 
 module.exports = {
     get,
+    getSegments,
     del
 }

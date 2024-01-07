@@ -9,6 +9,7 @@ const apiRouter = Router()
 apiRouter.get('/status', statusHandler)
 
 apiRouter.get('/message', messageHandlers.get)
+apiRouter.get('/message/segments', messageHandlers.getSegments)
 apiRouter.delete('/message/:id', messageHandlers.del)
 
 apiRouter.get('/explore', exploreHandler)

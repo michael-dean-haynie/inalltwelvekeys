@@ -127,6 +127,11 @@ sudo npm install
 sudo npm run deploy
 ```
 
+## Copy remote sqlite db to local machine downloads folder
+```shell
+scp root@172.104.194.49:/root/inalltwelvekeys/dev.db.sqlite3 /Users/michael/Downloads/remote.db.sqlite3
+```
+
 ## Monitor logs
 ```shell
 sudo journalctl -f -n 100 -u inalltwelvekeys
