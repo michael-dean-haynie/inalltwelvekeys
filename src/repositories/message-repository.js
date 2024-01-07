@@ -23,6 +23,14 @@ class MessageRepository {
         // console.log(result.total); // --> 3341
         return result;
     }
+
+    static async delete(id) {
+        const numberOfDeletedRows = await Message.query().deleteById(id)
+    }
+
+    static async deleteAll() {
+        await Message.query().truncate()
+    }
 }
 
 module.exports = MessageRepository

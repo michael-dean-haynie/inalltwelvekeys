@@ -18,6 +18,29 @@ async function get(req, res) {
     res.end(JSON.stringify(pageResult.results))
 }
 
+/**
+ * Handler responsible for processing DELETE requests
+ */
+async function del(req, res, next) {
+    const { id } = req.params
+
+    if (id === undefined) {
+        console.error(`request param ':id' was undefined`);
+    }
+
+    if (id === 'truncate') {
+        await MessageRepository.deleteAll()
+    }
+
+    if (validator.isInt(id)) {
+        await MessageRepository.delete(Number(id))
+    }
+
+    res.statusCode = 204
+    res.end()
+}
+
 module.exports = {
-    get
+    get,
+    del
 }
