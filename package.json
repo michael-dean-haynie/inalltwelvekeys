@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "node index.js",
+    "start": "npm run migrate && node index.js",
+    "migrate": "knex migrate:latest",
     "redeploy": "sudo systemctl stop inalltwelvekeys.service && sudo git pull && sudo npm install && sudo systemctl start inalltwelvekeys.service && sudo journalctl -f -n 100 -u inalltwelvekeys",
     "journal": "sudo journalctl -f -n 100 -u inalltwelvekeys",
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -25,7 +26,10 @@
     "fs": "^0.0.1-security",
     "http": "^0.0.1-security",
     "https": "^1.0.0",
+    "knex": "^3.1.0",
+    "objection": "^3.1.3",
     "router": "^1.3.8",
+    "sqlite3": "^5.1.7",
     "uuid": "^9.0.1",
     "ws": "^8.14.2"
   }

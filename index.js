@@ -3,9 +3,12 @@ const http = require('http')
 const fs  = require('fs')
 const { WebSocketServer } = require('ws')
 const dotenv = require('dotenv')
+const Knex = require('knex');
+const knexConfig = require('./knexfile');
+const { Model } = require('objection');
 
-const WebsocketConnectionsService = require('./src/services/websocket-connections-service')
 const setupRouter = require('./src/routes/router.js')
+const websocketHandler = require('./src/handlers/websocket-handler.js')
 
 // configure / validate environment variables
 dotenv.config()
@@ -19,8 +22,9 @@ if (process.env.HTTPS_PORT === undefined) {
     throw new Error("Missing PORT environment variable.")
 }
 
-// Initialize Services
-const websocketConnectionsService = new WebsocketConnectionsService()
+// Initialize knex
+const knex = Knex(knexConfig.development);
+Model.knex(knex);
 
 // create https server
 const serverOptions = {
@@ -40,45 +44,7 @@ wss.on('listening', () => {
     console.log(`wss server listening on port ${process.env.HTTPS_PORT} ...`)
 })
 wss.on('connection', function connection(ws, request) {
-    // console.log('ip:', request.socket.remoteAddress)
-    // console.log('userAgent', request.headers['user-agent'])
-
-    // register connection
-    const connection = websocketConnectionsService.registerConnection({ websocket: ws})
-    console.log(`Connection opened (${connection.id})`)
-
-    ws.on('message', function message(data) {
-        let dataAsString
-        if (typeof data === 'string') {
-            // Data is already a string, no need to convert
-            // console.log('Received message as string:', data);
-            dataAsString = data
-        } else if (data instanceof Buffer) {
-            // Convert the binary data to a string using UTF-8 encoding
-            const messageString = data.toString('utf8');
-            // console.log('Received message as binary:', messageString);
-            dataAsString = messageString
-        } else {
-            // Handle other data types if necessary
-            console.error('Received unsupported data type:', typeof data)
-        }
-        console.log(`Connection received message (${connection.id}): ${dataAsString}`)
-
-        // broadcast to all other connections
-        const otherConnections = websocketConnectionsService.connections.filter(conn => conn.id !== connection.id)
-        for (let otherConnection of otherConnections) {
-            otherConnection.websocket.send(dataAsString)
-        }
-    })
-
-    ws.on('error', (error) => {
-        console.error(`Error with connection (${connection.id}): `, error)
-    })
-
-    ws.on('close', function close() {
-        console.log(`Connection closed (${connection.id})`)
-    })
-
+    websocketHandler(ws, request)
 });
 
 // start https server

@@ -137,3 +137,6 @@ dist
 
 # Ignore deployed frontend directory
 /inalltwelvekeys-ui/
+
+# Ignore in-memory db files
+*.sqlite3
