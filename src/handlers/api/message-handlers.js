@@ -15,7 +15,7 @@ async function get(req, res) {
 
     res.statusCode = 200
     res.setHeader('Content-Type', 'application/json')
-    res.end(JSON.stringify(pageResult.results))
+    res.end(JSON.stringify(pageResult))
 }
 
 /**
