@@ -33,6 +33,13 @@ class MessageRepository {
         return result
     }
 
+    static async readSegment(start, end) {
+        return Message.query()
+            .where('timestamp', '>=', start)
+            .where('timestamp', '<=', end)
+            .orderBy('timestamp')
+    }
+
     static async delete(id) {
         const numberOfDeletedRows = await Message.query().deleteById(id)
     }

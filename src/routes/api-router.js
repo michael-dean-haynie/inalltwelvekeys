@@ -10,6 +10,7 @@ apiRouter.get('/status', statusHandler)
 
 apiRouter.get('/message', messageHandlers.get)
 apiRouter.get('/message/segments', messageHandlers.getSegments)
+apiRouter.get('/message/segment', messageHandlers.getSegment)
 apiRouter.delete('/message/:id', messageHandlers.del)
 
 apiRouter.get('/explore', exploreHandler)
