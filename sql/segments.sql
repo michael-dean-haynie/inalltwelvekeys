@@ -54,3 +54,4 @@ SELECT *,
                 AND messagesInWindow.byte1 <= 159 -- "NOTE ON" messages
         ) AS keystrokes
 FROM segments
+WHERE keystrokes > 0

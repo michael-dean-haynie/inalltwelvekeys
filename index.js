@@ -42,7 +42,6 @@ if (process.env.ENV === 'dev') {
 // create https server
 const server = createServer(serverOptions, (req, res) => {
     // open up cors
-    console.log('allowing cors https')
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Methods', 'OPTIONS, GET');
     res.setHeader('Access-Control-ax-Age', 2592000); // 30 days
@@ -66,7 +65,6 @@ server.listen(process.env.HTTPS_PORT, () => {
 // create/start http server
 http.createServer((req, res) => {
     // open up cors
-    console.log('allowing cors http')
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Methods', 'OPTIONS, GET');
     res.setHeader('Access-Control-ax-Age', 2592000); // 30 days

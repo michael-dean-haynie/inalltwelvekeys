@@ -33,9 +33,17 @@ async function getSegments(req, res) {
         res.end(`query params 'start' and 'end' must both be ISO8601 dates`)
     }
 
+    if (!validator.isInt(queryData.gapSize || '')) {
+        res.statusCode = 400
+        res.setHeader('Content-Type', 'text/plain')
+        res.end(`query params 'gapSize' must be an integer`)
+    }
+
     const startMs = new Date(queryData.start).getTime()
     const endMs = new Date(queryData.end).getTime()
-    const gapSizeMs = 10000 // gap size set to 10000 ms (10 seconds)
+    // const gapSizeMs = 10000 // gap size set to 10000 ms (10 seconds)
+    const gapSizeMs = Number(queryData.gapSize) * 1000
+
     const result = await MessageRepository.readSegments(startMs, endMs, gapSizeMs)
 
     res.statusCode = 200
