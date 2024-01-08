@@ -24,10 +24,9 @@ if (process.env.HTTPS_PORT === undefined) {
 
 // Initialize knex
 const knex = Knex(knexConfig.development);
-Model.knex(knex);
+Model.knex(knex)
 
-// create https server
-const serverOptions = {
+let serverOptions = {
     cert: fs.readFileSync(process.env.TLS_CERT),
     key: fs.readFileSync(process.env.TLS_CERT_KEY)
 }
@@ -35,7 +34,19 @@ if (process.env.TLS_CA_BUNDLE !== undefined) {
     serverOptions.ca = fs.readFileSync(process.env.TLS_CA_BUNDLE)
 }
 
+if (process.env.ENV === 'dev') {
+    console.log('emptying serverOptions')
+    serverOptions = {}
+}
+
+// create https server
 const server = createServer(serverOptions, (req, res) => {
+    // open up cors
+    console.log('allowing cors https')
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Methods', 'OPTIONS, GET');
+    res.setHeader('Access-Control-ax-Age', 2592000); // 30 days
+
     setupRouter(req, res)
 });
 
@@ -54,12 +65,22 @@ server.listen(process.env.HTTPS_PORT, () => {
 
 // create/start http server
 http.createServer((req, res) => {
-    const tgt = new URL(req.url, `https://${req.headers.host}`).toString()
-        .replace('http:', 'https:')
-        .replace(process.env.HTTP_PORT, process.env.HTTPS_PORT)
-    console.log('redirecting to: ', tgt)
-    res.writeHead(302, {'Location': tgt})
-    res.end();
+    // open up cors
+    console.log('allowing cors http')
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Methods', 'OPTIONS, GET');
+    res.setHeader('Access-Control-ax-Age', 2592000); // 30 days
+
+    if (process.env.ENV === 'dev'){
+        setupRouter(req, res)
+    } else {
+        const tgt = new URL(req.url, `https://${req.headers.host}`).toString()
+            .replace('http:', 'https:')
+            .replace(process.env.HTTP_PORT, process.env.HTTPS_PORT)
+        console.log('redirecting to: ', tgt)
+        res.writeHead(302, {'Location': tgt})
+        res.end();
+    }
 }).listen(process.env.HTTP_PORT, () => {
     console.log(`http server listening on port ${process.env.HTTP_PORT} ...`)
 })
