@@ -136,3 +136,6 @@ scp root@172.104.194.49:/root/inalltwelvekeys/dev.db.sqlite3 /Users/michael/Down
 ```shell
 sudo journalctl -f -n 100 -u inalltwelvekeys
 ```
+
+## DB size note
+1 month of practicing every day produces about 20-25 MB of database data. (only 1 table, midi messages)
